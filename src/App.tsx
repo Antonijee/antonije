@@ -1,7 +1,7 @@
 const App = () => {
   return (
     <>
-      Hello G!
+      Hello G! Here is Luffy coming strong! :D
     </>
   )
 }

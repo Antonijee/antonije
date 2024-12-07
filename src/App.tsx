@@ -1,10 +1,5 @@
 const App = () => {
+  return <h1 className="text-6xl border font-bold underline">Hello world!</h1>;
+};
 
-  return (
-    <>
-      A Lj - Portfolio
-    </>
-  )
-}
-
-export default App
+export default App;

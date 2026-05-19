@@ -1,13 +1,13 @@
 import AboutMe from '../components/AboutMe';
-import Companies from '../components/Companies';
 import Hero from '../components/Hero';
+import SkillsExperience from '../components/SkillsExperience';
 
 const Homepage = () => {
   return (
     <section>
       <Hero />
       <AboutMe />
-      <Companies />
+      <SkillsExperience />
     </section>
   );
 };

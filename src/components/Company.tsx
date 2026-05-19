@@ -27,19 +27,19 @@ const Company = ({name, position, description, image}: TCompany) => {
         </div>
       )}
 
-      <div className="p-6 bg-white flex flex-col min-h-[240px]">
-        <h2 className="text-2xl font-bold text-blue-900 mb-2 leading-tight">
+      <div className="p-4 sm:p-6 bg-white flex flex-col min-h-[200px] sm:min-h-[240px]">
+        <h2 className="text-xl sm:text-2xl font-bold text-blue-900 mb-2 leading-tight">
           {name}
         </h2>
-        <p className="text-sm text-blue-700 mb-4 font-medium">
+        <p className="text-xs sm:text-sm text-blue-700 mb-3 sm:mb-4 font-medium">
           {position}
         </p>
-        <p className="text-sm text-blue-800 leading-relaxed mb-6">
+        <p className="text-xs sm:text-sm text-blue-800 leading-relaxed mb-4 sm:mb-6">
           {description.length > 100 ? `${description.substring(0, 100)} [...]` : description}
         </p>
         <Button 
           variant="outline" 
-          className="w-full border-blue-900 text-blue-900 hover:bg-blue-50 hover:text-blue-900 mt-auto cursor-pointer"
+          className="w-full border-blue-900 text-blue-900 hover:bg-blue-50 hover:text-blue-900 mt-auto cursor-pointer text-sm sm:text-base"
           onClick={() => navigate(`${prefix}company/${companySlug}`)}
         >
             View Details

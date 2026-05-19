@@ -18,6 +18,16 @@
   width: 50%;
   height: 120%;
   transform: rotate(-45deg);
+  pointer-events: none;
+  z-index: 0;
+
+  &--hero {
+    position: absolute;
+    left: auto;
+    right: 0;
+    width: 55%;
+    height: 100%;
+  }
 }
 
 .star {

@@ -4,11 +4,11 @@ import fatcatCoders from "@/assets/fatcoder.png"
 import smartCat from "@/assets/sc.png"
 
 export type ColorScheme = {
-  primary: string      // Main accent color
-  secondary: string    // Secondary accent
-  accent: string       // Highlight color
-  text: string         // Primary text
-  textSecondary: string // Secondary text
+  primary: string
+  secondary: string
+  accent: string
+  text: string
+  textSecondary: string
 }
 
 export type CompanyData = {
@@ -21,9 +21,9 @@ export type CompanyData = {
   shortDescription: string
   backgroundImage: string
   logo?: string
+  logoInitial?: string
   technologies: string[]
-  responsibilities: string[]
-  achievements?: string[]
+  responsibilities?: string[]
   projects?: {
     name: string
     description: string
@@ -32,108 +32,199 @@ export type CompanyData = {
   colorScheme: ColorScheme
 }
 
+export type SkillCategory = {
+  title: string
+  items: string[]
+}
+
+export const profileData = {
+  email: "antonije.ljubisa@gmail.com",
+  phone: "+381 60 470 3999",
+  location: "Belgrade, Serbia",
+  github: "https://github.com/Luffylando",
+  linkedin: "https://www.linkedin.com/in/antonije-ljubiša-032955175",
+}
+
+export const educationData = {
+  institution: "University of Belgrade, Faculty of Philosophy",
+  period: "2013 – 2017",
+}
+
+export const interests = ["Chess", "Anime", "Non-smoker"]
+
+export const skillsData: SkillCategory[] = [
+  {
+    title: "Languages",
+    items: ["JavaScript / TypeScript", "PHP", "Go (learning)"],
+  },
+  {
+    title: "Frontend",
+    items: [
+      "React",
+      "Next.js",
+      "React Query",
+      "Zustand",
+      "Redux Toolkit",
+      "React Native",
+      "Gatsby",
+      "Tailwind",
+      "Recharts",
+    ],
+  },
+  {
+    title: "Backend",
+    items: ["Node.js", "NestJS", "Express", "Laravel"],
+  },
+  {
+    title: "Databases",
+    items: ["PostgreSQL", "MySQL", "MongoDB", "Redis"],
+  },
+  {
+    title: "Tools & Infra",
+    items: [
+      "Docker",
+      "Git",
+      "Jest",
+      "Playwright",
+      "GraphQL",
+      "Kafka",
+      "Microservices",
+      "AWS",
+      "GCP",
+      "CI/CD",
+    ],
+  },
+]
+
 export const companiesData: CompanyData[] = [
   {
     id: "smartcat",
     name: "SmartCat",
-    position: "Senior Frontend Developer",
-    period: "May 2025 - Present",
-    client: "Content Lion",
-    description: "Working on Content Lion project using React, TypeScript, Docker, and CI/CD. Building solutions to replace Oracle CM.",
-    shortDescription: "Working on Content Lion project using React, TypeScript, Docker, and CI/CD. Building solutions to replace Oracle CM.",
+    position: "Senior Frontend Engineer",
+    period: "May 2025 – Present",
+    description:
+      "Working across two enterprise clients-leading frontend for Shopify and contributing senior-level development on Content Lion.",
+    shortDescription:
+      "Lead Frontend Engineer for Shopify and Senior Frontend Engineer on Content Lion. Architecture, best practices, and high-quality delivery across both clients.",
     backgroundImage: smartCat,
     logo: smartCat,
     colorScheme: {
-      primary: "#1E40AF",      // Dark Blue
-      secondary: "#2563EB",    // Medium Blue
-      accent: "#3B82F6",      // Bright Blue
-      text: "#E0E7FF",         // Light Blue-White
-      textSecondary: "#C7D2FE" // Light Blue
+      primary: "#1E40AF",
+      secondary: "#2563EB",
+      accent: "#3B82F6",
+      text: "#E0E7FF",
+      textSecondary: "#C7D2FE",
     },
     technologies: [
+      "Next.js",
       "React",
       "TypeScript",
       "Docker",
-      "Github",
+      "GitHub",
       "CI/CD",
-      "AI",
-      "Playwright (E2E)",
-      "Jest (Unit)",
-      "GoLang",
-      "Monorepo",
+      "Playwright",
       "Tailwind",
       "React Query",
-      "Context"
+      "Kafka",
+      "Microservices",
+      "Go",
+      "Monorepo",
+      "AI / Cursor",
+      "Claude Code",
     ],
-    responsibilities: [
-      "Work daily with the listed technology stack on tasks such as bug fixes, feature development, spikes, and ongoing refactoring to improve technical quality",
-      "Collaborate closely with clients, designers, frontend and backend engineers, infrastructure team, stakeholders, and delivery managers to plan next steps",
-      "Evaluate suitable technologies and libraries for our needs",
-      "Participate in the hiring process by evaluating candidates during technical interviews"
+    projects: [
+      {
+        name: "Shopify",
+        description:
+          "Lead Frontend Engineer - owning architecture, technical direction, and engineering culture. Introduced team standards (ESLint, Husky, code review), mentored engineers, and stayed closely aligned with the client on product goals.",
+        tech: [
+          "Next.js",
+          "TypeScript",
+          "Docker",
+          "GitHub",
+          "CI/CD",
+          "Playwright",
+          "Tailwind",
+          "React Query",
+          "Kafka",
+          "Microservices",
+          "Cursor",
+          "Claude Code",
+        ],
+      },
+      {
+        name: "Content Lion",
+        description:
+          "Senior Frontend Engineer on a platform replacing Oracle CM-shaping architecture decisions, guiding the team on what to change and when, and keeping quality high while shipping fast.",
+        tech: [
+          "React",
+          "TypeScript",
+          "Docker",
+          "GitHub",
+          "CI/CD",
+          "Playwright",
+          "Jest",
+          "Go",
+          "Monorepo",
+          "Tailwind",
+          "React Query",
+        ],
+      },
     ],
-    achievements: [
-      "Building a solution to replace Oracle CM with modern technology stack",
-      "Working on complex application architecture in a monorepo environment",
-      "Implementing comprehensive testing with Playwright for E2E and Jest for unit tests"
-    ]
   },
   {
     id: "ocean-thinkit",
     name: "Ocean ThinkIt",
-    position: "Senior Frontend Developer",
-    period: "March 2024 - May 2025",
+    position: "Senior Frontend Engineer",
+    period: "March 2024 – May 2025",
     client: "Lean Library (Web Browser Extension)",
-    description: "Enhanced Lean Library browser extension for students to access global articles and eBooks. React, TypeScript, Playwright.",
-    shortDescription: "Enhanced Lean Library browser extension for students to access global articles and eBooks. React, TypeScript, Playwright.",
+    description:
+      "Enhanced a browser extension that gives students access to global articles and eBooks through their university library.",
+    shortDescription:
+      "Enhanced the Lean Library browser extension for students. React, TypeScript, Playwright, and close collaboration with cross-functional teams.",
     backgroundImage: oceanThinkIt,
     logo: oceanThinkIt,
     colorScheme: {
-      primary: "#0E3386",      // Light Blue
-      secondary: "#93C5FD",   // Lighter Blue
-      accent: "#BFDBFE",       // Very Light Blue
-      text: "#FFFFFF",         // White
-      textSecondary: "#E0F2FE" // Light Blue-White
+      primary: "#0E3386",
+      secondary: "#93C5FD",
+      accent: "#BFDBFE",
+      text: "#FFFFFF",
+      textSecondary: "#E0F2FE",
     },
     technologies: [
       "React",
       "TypeScript",
       "Vanilla JS",
       "Docker",
-      "Gitlab workflow",
+      "GitLab",
       "Playwright",
       "Jest",
-      "AI"
+      "Cursor",
     ],
     responsibilities: [
-      "Work with React, TypeScript, and Vanilla JavaScript to enhance a web extension that provides students with seamless access to a wide range of global articles, eBooks, and educational resources",
-      "Collaborate closely with clients, project managers, designers, and product owners to align on goals and deliverables",
-      "Develop new features, resolve bugs, write unit and E2E tests, review colleagues' pull requests",
-      "Refactor code to improve performance",
-      "Take on exploratory tasks (spikes) to investigate, propose, and implement improvements to optimize the application's overall efficiency",
-      "Simplify the application's architecture, such as consolidating storage systems, while continuously delivering new functionalities to meet user needs"
+      "Shipped features and fixes across the extension's React and vanilla JS codebase",
+      "Consolidated storage systems and simplified architecture through targeted spikes",
+      "Maintained coverage with Playwright E2E and Jest unit tests",
     ],
-    achievements: [
-      "Successfully enhanced browser extension for educational resource access",
-      "Improved application architecture by consolidating storage systems",
-      "Maintained high code quality through comprehensive testing and code reviews"
-    ]
   },
   {
     id: "valuer-ai",
-    name: "Valuer Ai",
-    position: "Lead Frontend Developer",
-    period: "September 2023 - March 2024",
+    name: "Valuer.ai",
+    position: "Lead Frontend Engineer",
+    period: "September 2023 – March 2024",
     client: "Valuer.ai",
-    description: "Led modernization of React app to React 18+ with TypeScript, Zustand, and React Query. Refactored legacy code.",
-    shortDescription: "Led modernization of React app to React 18+ with TypeScript, Zustand, and React Query. Refactored legacy code.",
+    description:
+      "Brought in to modernize a legacy React codebase at a fast-moving startup product team.",
+    shortDescription:
+      "Led React 18+ modernization with TypeScript, Zustand, and React Query. Refactored legacy code and aligned frontend with backend and stakeholders.",
     backgroundImage: valuerAi,
     logo: valuerAi,
     colorScheme: {
-      primary: "#C2410C",      // Elegant Burnt Orange
-      secondary: "#EA580C",    // Rich Orange
-      accent: "#F97316",       // Warm Orange
-      text: "#FFF7ED",         // Warm Cream
-      textSecondary: "#FFEDD5" // Soft Peach
+      primary: "#C2410C",
+      secondary: "#EA580C",
+      accent: "#F97316",
+      text: "#FFF7ED",
+      textSecondary: "#FFEDD5",
     },
     technologies: [
       "React",
@@ -142,37 +233,31 @@ export const companiesData: CompanyData[] = [
       "Zustand",
       "React Query",
       "Tailwind",
-      "Laravel"
+      "Laravel",
     ],
     responsibilities: [
-      "Enhance and modernize a React application, upgrading it to the latest version (React 18+)",
-      "Incorporate best practices such as Zustand, React Query, and TypeScript",
-      "Refactor poorly written code to improve quality",
-      "Implement new features",
-      "Collaborate closely with backend teams to ensure alignment on data handling and code style",
-      "Participate in meetings with stakeholders, including project managers, product owners, and data team members"
+      "Migrated the app to React 18+ with TypeScript, Zustand, and React Query",
+      "Refactored legacy modules and shipped new product features on a steady release cadence",
+      "Aligned API contracts and data-fetching patterns with the Laravel backend team",
     ],
-    achievements: [
-      "Successfully upgraded React application to React 18+",
-      "Modernized codebase with state management best practices (Zustand, React Query)",
-      "Improved code quality through systematic refactoring of legacy code"
-    ]
   },
   {
     id: "fatcat-coders",
-    name: "FatCat Coders",
-    position: "Full Stack Developer",
-    period: "November 2019 - August 2023",
-    description: "Worked on Calendly (Gatsby, GraphQL), SAGE (Next.js, Node.js), and Convertmore (React, Express, AWS) with scheduling features.",
-    shortDescription: "Worked on Calendly (Gatsby, GraphQL), SAGE (Next.js, Node.js), and Convertmore (React, Express, AWS) with scheduling features.",
+    name: "Fat Cat Coders",
+    position: "Full Stack Engineer",
+    period: "November 2020 - August 2023",
+    description:
+      "Full-stack work across several client products over nearly three years.",
+    shortDescription:
+      "Full Stack Engineer on Calendly, SAGE, and Convertmore-Gatsby, Next.js, React, Node.js, and AWS.",
     backgroundImage: fatcatCoders,
     logo: fatcatCoders,
     colorScheme: {
-      primary: "#166534",      // Darkish Green
-      secondary: "#15803D",    // Medium Green
-      accent: "#16A34A",      // Bright Green
-      text: "#D1FAE5",        // Light Green-White
-      textSecondary: "#A7F3D0" // Light Green
+      primary: "#166534",
+      secondary: "#15803D",
+      accent: "#16A34A",
+      text: "#D1FAE5",
+      textSecondary: "#A7F3D0",
     },
     technologies: [
       "Gatsby",
@@ -183,53 +268,89 @@ export const companiesData: CompanyData[] = [
       "Elastic Search",
       "PostgreSQL",
       "React",
-      "ExpressJS",
+      "Express",
       "Redis",
       "AWS",
       "Twilio",
-      "Cloudflare"
-    ],
-    responsibilities: [
-      "Develop full-stack applications across multiple projects",
-      "Work on both frontend and backend functionality",
-      "Implement new features and optimize existing code",
-      "Collaborate with cross-functional teams"
+      "Cloudflare",
     ],
     projects: [
       {
         name: "Calendly",
-        description: "Worked on the frontend of the Calendly marketing site using Gatsby, Contentful, and GraphQL. Our goal was to rewrite legacy code while delivering new features. Daily tasks included implementing new pages, creating and optimizing components, and redesigning site elements.",
-        tech: ["Gatsby", "GraphQL", "Contentful", "Cloudflare", "In-house CSS framework"]
+        description:
+          "Worked on the frontend of the Calendly marketing platform using Gatsby, Contentful, and GraphQL. Focused on rewriting legacy code while delivering new features - building pages, creating and optimizing components, and improving overall UX and site design.",
+        tech: [
+          "Gatsby",
+          "GraphQL",
+          "Contentful",
+          "Cloudflare",
+          "In-house CSS framework",
+        ],
       },
       {
         name: "SAGE",
-        description: "Developed an application for university professors to upload, download, and share academic work or reference materials.",
-        tech: ["NextJS", "NodeJS", "Elastic Search", "PostgreSQL"]
+        description:
+          "Developed an application enabling university professors to upload, manage, download, and share academic papers and reference materials efficiently.",
+        tech: ["Next.js", "Node.js", "Elastic Search", "PostgreSQL"],
       },
       {
         name: "Convertmore",
-        description: "A complex project where I enhanced both frontend and backend functionality, particularly around scheduling appointments and live call features.",
-        tech: ["React", "ExpressJS", "Redis", "PostgreSQL", "AWS", "Twilio"]
-      }
+        description:
+          "Improved both frontend and backend functionality on a complex scheduling product, with a strong focus on appointment scheduling and live call features.",
+        tech: ["React", "Express", "Redis", "PostgreSQL", "AWS", "Twilio"],
+      },
     ],
-    achievements: [
-      "Worked on multiple high-profile projects including Calendly marketing site",
-      "Developed full-stack solutions for various clients",
-      "Grew from Junior to Medior level during tenure"
-    ]
-  }
+  },
+  {
+    id: "cipher",
+    name: "CIPHER",
+    position: "Junior Full Stack Engineer",
+    period: "May 2018 – August 2020",
+    logoInitial: "C",
+    description:
+      "First professional role-learning full-stack delivery on client web applications.",
+    shortDescription:
+      "Junior Full Stack Engineer building web apps with PHP, Laravel, and JavaScript. First professional role-foundation for full-stack and frontend career.",
+    backgroundImage: fatcatCoders,
+    colorScheme: {
+      primary: "#4C1D95",
+      secondary: "#6D28D9",
+      accent: "#8B5CF6",
+      text: "#EDE9FE",
+      textSecondary: "#DDD6FE",
+    },
+    technologies: [
+      "PHP",
+      "Laravel",
+      "JavaScript",
+      "MySQL",
+      "HTML",
+      "CSS",
+      "Git",
+      "REST APIs",
+    ],
+    responsibilities: [
+      "Built and maintained Laravel and JavaScript features under senior mentorship",
+      "Shipped client-facing functionality from ticket to production",
+      "Picked up testing, code review, and REST API integration practices",
+    ],
+  },
 ]
 
 export const getCompanyById = (id: string): CompanyData | undefined => {
-  return companiesData.find(company => company.id === id)
+  return companiesData.find((company) => company.id === id)
 }
 
 export const getCompanyByName = (name: string): CompanyData | undefined => {
-  const normalizedName = name.toLowerCase().replace(/\s+/g, '-');
-  return companiesData.find(company => {
-    const normalizedCompanyName = company.name.toLowerCase().replace(/\s+/g, '-');
-    const normalizedCompanyId = company.id.toLowerCase();
-    return normalizedCompanyName === normalizedName || normalizedCompanyId === normalizedName;
+  const normalizedName = name.toLowerCase().replace(/\s+/g, "-")
+  return companiesData.find((company) => {
+    const normalizedCompanyName = company.name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+    const normalizedCompanyId = company.id.toLowerCase()
+    return (
+      normalizedCompanyName === normalizedName ||
+      normalizedCompanyId === normalizedName
+    )
   })
 }
-

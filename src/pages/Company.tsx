@@ -1,431 +1,384 @@
 import { useParams, Link } from "react-router-dom";
-import { getCompanyByName } from "@/data";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { useSpring, animated, useSprings } from '@react-spring/web';
-import { useEffect, useRef, useState } from 'react';
+import { getCompanyByName, companiesData } from "@/data";
+import { ArrowLeft, Calendar, Building2, ArrowUpRight } from "lucide-react";
+import { useSpring, animated, useSprings } from "@react-spring/web";
+import { useEffect, useRef, useState, useMemo } from "react";
+import CompanyLogo from "@/components/CompanyLogo";
+import "../stars.scss";
 
-const CompanyPage = () => {
-    const { name } = useParams();
-    const company = name ? getCompanyByName(name) : undefined;
-    const colors = company?.colorScheme;
+const shell =
+  "w-full px-4 sm:px-6 md:px-12 lg:px-[225px] py-10 sm:py-14 lg:py-16 relative z-10";
 
-    if (!company || !colors) {
-        return (
-            <div className="min-h-screen flex items-center justify-center px-4 bg-black">
-                <div className="text-center">
-                    <h1 className="text-4xl font-bold text-white mb-4">Company Not Found</h1>
-                    <p className="text-gray-400 mb-8">The company you're looking for doesn't exist.</p>
-                    <Link to="/antonije/">
-                        <Button variant="outline" className="text-white border-white/20 hover:bg-white/10">
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Back to Home
-                        </Button>
-                    </Link>
-                </div>
-            </div>
-        );
-    }
+const cardClass =
+  "rounded-xl border border-[#3d6b5c] bg-[#1a4039] p-5 sm:p-6";
 
-    // Helper function to convert hex to rgba
-    const hexToRgb = (hex: string) => {
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : { r: 0, g: 0, b: 0 };
-    };
+const tagClass =
+  "text-sm text-[#e8dcc8] bg-[#234a42] border border-[#3d6b5c] px-3 py-1.5 rounded-lg font-light";
 
-    const primaryRgb = hexToRgb(colors.primary);
-    const secondaryRgb = hexToRgb(colors.secondary);
+function CardLabel({ children }: { children: string }) {
+  return (
+    <p className="text-[11px] uppercase tracking-[0.18em] text-[#8fb8b0] font-medium mb-4">
+      {children}
+    </p>
+  );
+}
 
-    // Scroll to top when component mounts or company changes
-    useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [name]);
+function CompanyPage() {
+  const { name } = useParams();
+  const company = name ? getCompanyByName(name) : undefined;
+  const prefix = "/antonije/";
 
-    // Refs for intersection observers
-    const heroRef = useRef<HTMLDivElement>(null);
-    const aboutRef = useRef<HTMLElement>(null);
-    const responsibilitiesRef = useRef<HTMLElement>(null);
-    const achievementsRef = useRef<HTMLElement>(null);
-    const techStackRef = useRef<HTMLElement>(null);
-    const projectsRef = useRef<HTMLElement>(null);
+  const hasProjects = Boolean(company?.projects?.length);
+  const hasKeyWork = Boolean(
+    company && !hasProjects && company.responsibilities?.length
+  );
 
-    // Visibility states
-    const [heroVisible, setHeroVisible] = useState(false);
-    const [aboutVisible, setAboutVisible] = useState(false);
-    const [responsibilitiesVisible, setResponsibilitiesVisible] = useState(false);
-    const [achievementsVisible, setAchievementsVisible] = useState(false);
-    const [techStackVisible, setTechStackVisible] = useState(false);
-    const [projectsVisible, setProjectsVisible] = useState(false);
+  const mainSectionCount = useMemo(
+    () => 3 + (hasProjects || hasKeyWork ? 1 : 0),
+    [hasProjects, hasKeyWork]
+  );
 
-    // Hero animations
-    const [heroSprings, heroApi] = useSpring(() => ({
-        from: { opacity: 0, transform: 'translateY(30px)' },
-        config: { tension: 50, friction: 30 }
+  const pageRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  const [heroSpring, heroApi] = useSpring(() => ({
+    from: { opacity: 0, transform: "translateY(12px)" },
+    config: { tension: 90, friction: 26 },
+  }));
+
+  const [mainSprings, mainApi] = useSprings(mainSectionCount, () => ({
+    from: { opacity: 0, transform: "translateY(16px)" },
+    config: { tension: 90, friction: 26 },
+  }));
+
+  const [sidebarSpring, sidebarApi] = useSpring(() => ({
+    from: { opacity: 0, transform: "translateY(16px)" },
+    config: { tension: 90, friction: 26 },
+  }));
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+    setVisible(false);
+    heroApi.set({ opacity: 0, transform: "translateY(12px)" });
+    sidebarApi.set({ opacity: 0, transform: "translateY(16px)" });
+    mainApi.start(() => ({
+      opacity: 0,
+      transform: "translateY(16px)",
+      immediate: true,
     }));
+  }, [name, heroApi, sidebarApi, mainApi, mainSectionCount]);
 
-    const [logoSprings, logoApi] = useSpring(() => ({
-        from: { opacity: 0, transform: 'scale(0.8) rotate(-5deg)' },
-        config: { tension: 50, friction: 30 }
-    }));
+  useEffect(() => {
+    if (!company) return;
 
-    // About section animation
-    const [aboutSprings, aboutApi] = useSpring(() => ({
-        from: { opacity: 0, transform: 'translateY(30px)' },
-        config: { tension: 50, friction: 30 }
-    }));
-
-    // Responsibilities animation
-    const [responsibilitiesSprings, responsibilitiesApi] = useSpring(() => ({
-        from: { opacity: 0, transform: 'translateX(-30px)' },
-        config: { tension: 50, friction: 30 }
-    }));
-
-    // Achievements animation
-    const [achievementsSprings, achievementsApi] = useSpring(() => ({
-        from: { opacity: 0, transform: 'translateX(30px)' },
-        config: { tension: 50, friction: 30 }
-    }));
-
-    // Tech stack animation
-    const [techStackSprings, techStackApi] = useSpring(() => ({
-        from: { opacity: 0, transform: 'translateY(30px)' },
-        config: { tension: 50, friction: 30 }
-    }));
-
-    // Projects animations
-    const [projectSprings, projectApi] = useSprings(
-        company.projects?.length || 0,
-        () => ({
-            from: { opacity: 0, transform: 'translateY(30px) scale(0.95)' },
-            config: { tension: 50, friction: 30 }
-        }),
-        []
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !visible) {
+          setVisible(true);
+          heroApi.start({ to: { opacity: 1, transform: "translateY(0)" } });
+          sidebarApi.start({
+            to: { opacity: 1, transform: "translateY(0)" },
+            delay: 60,
+          });
+          mainApi.start((i) => ({
+            to: { opacity: 1, transform: "translateY(0)" },
+            delay: 100 + i * 60,
+          }));
+        }
+      },
+      { threshold: 0.04 }
     );
 
-    // Intersection Observers
-    useEffect(() => {
-        const observers: IntersectionObserver[] = [];
+    if (pageRef.current) observer.observe(pageRef.current);
+    return () => observer.disconnect();
+  }, [visible, heroApi, sidebarApi, mainApi, company, name]);
 
-        // Hero observer
-        if (heroRef.current) {
-            const observer = new IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting && !heroVisible) {
-                        setHeroVisible(true);
-                        heroApi.start({ to: { opacity: 1, transform: 'translateY(0)' } });
-                        logoApi.start({ to: { opacity: 1, transform: 'scale(1) rotate(0deg)' }, delay: 100 });
-                    }
-                },
-                { threshold: 0.2 }
-            );
-            observer.observe(heroRef.current);
-            observers.push(observer);
-        }
-
-        // About observer
-        if (aboutRef.current) {
-            const observer = new IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting && !aboutVisible) {
-                        setAboutVisible(true);
-                        aboutApi.start({ to: { opacity: 1, transform: 'translateY(0)' } });
-                    }
-                },
-                { threshold: 0.2 }
-            );
-            observer.observe(aboutRef.current);
-            observers.push(observer);
-        }
-
-        // Responsibilities observer
-        if (responsibilitiesRef.current) {
-            const observer = new IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting && !responsibilitiesVisible) {
-                        setResponsibilitiesVisible(true);
-                        responsibilitiesApi.start({ to: { opacity: 1, transform: 'translateX(0)' } });
-                    }
-                },
-                { threshold: 0.2 }
-            );
-            observer.observe(responsibilitiesRef.current);
-            observers.push(observer);
-        }
-
-        // Achievements observer
-        if (achievementsRef.current) {
-            const observer = new IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting && !achievementsVisible) {
-                        setAchievementsVisible(true);
-                        achievementsApi.start({ to: { opacity: 1, transform: 'translateX(0)' } });
-                    }
-                },
-                { threshold: 0.2 }
-            );
-            observer.observe(achievementsRef.current);
-            observers.push(observer);
-        }
-
-        // Tech stack observer
-        if (techStackRef.current) {
-            const observer = new IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting && !techStackVisible) {
-                        setTechStackVisible(true);
-                        techStackApi.start({ to: { opacity: 1, transform: 'translateY(0)' } });
-                    }
-                },
-                { threshold: 0.2 }
-            );
-            observer.observe(techStackRef.current);
-            observers.push(observer);
-        }
-
-        // Projects observer
-        if (projectsRef.current && company.projects) {
-            const observer = new IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting && !projectsVisible) {
-                        setProjectsVisible(true);
-                        projectApi.start((index) => ({
-                            to: { opacity: 1, transform: 'translateY(0) scale(1)' },
-                            delay: index * 100
-                        }));
-                    }
-                },
-                { threshold: 0.2 }
-            );
-            observer.observe(projectsRef.current);
-            observers.push(observer);
-        }
-
-        return () => {
-            observers.forEach(obs => obs.disconnect());
-        };
-    }, [
-        heroVisible, aboutVisible, responsibilitiesVisible, achievementsVisible, 
-        techStackVisible, projectsVisible, heroApi, logoApi, aboutApi, 
-        responsibilitiesApi, achievementsApi, techStackApi, projectApi, company.projects
-    ]);
-
+  if (!company) {
     return (
-        <div 
-            className="min-h-screen"
-            style={{
-                '--color-primary': colors.primary,
-                '--color-secondary': colors.secondary,
-                '--color-accent': colors.accent,
-                '--color-text': colors.text,
-                '--color-text-secondary': colors.textSecondary,
-                '--primary-rgb': `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`,
-                '--secondary-rgb': `${secondaryRgb.r}, ${secondaryRgb.g}, ${secondaryRgb.b}`,
-                background: `linear-gradient(135deg, 
-                    rgba(var(--primary-rgb), 0.05) 0%, 
-                    #e8e8e8 30%, 
-                    #e0e0e0 50%, 
-                    #e8e8e8 55%, 
-                    rgba(var(--secondary-rgb), 0.05) 90%
-                )`
-            } as React.CSSProperties & {
-                '--color-primary': string;
-                '--color-secondary': string;
-                '--color-accent': string;
-                '--color-text': string;
-                '--color-text-secondary': string;
-                '--primary-rgb': string;
-                '--secondary-rgb': string;
-            }}
+      <div className={`${shell} min-h-screen bg-[#16423c]`}>
+        <p className="text-white text-xl font-medium mb-2">Not found</p>
+        <p className="text-[#9ebdb7] font-light mb-8">This role does not exist.</p>
+        <Link
+          to={prefix}
+          className="inline-flex items-center gap-2 text-sm text-[#8fb8b0] hover:text-[#c9a87c] no-underline transition-colors"
         >
-            <div className="max-w-7xl mx-auto px-8 py-16">
-                {/* Header */}
-                <div className="mb-16">
-                    <Link to="/antonije/">
-                        <Button 
-                            variant="ghost" 
-                            className="mb-12 text-gray-600 hover:text-gray-900 transition-colors"
-                        >
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Back
-                        </Button>
-                    </Link>
-                    
-                    {/* Hero */}
-                    <animated.div ref={heroRef} className="mb-20" style={heroSprings}>
-                        <div className="mb-6">
-                            <span className="text-sm font-medium uppercase tracking-wider" style={{ color: colors.primary }}>
-                                {company.period}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-6 mb-6">
-                            {company.logo && (
-                                <animated.img 
-                                    src={company.logo} 
-                                    alt={`${company.name} logo`}
-                                    className="h-full w-32 object-contain rounded-[12px]"
-                                    style={logoSprings}
-                                />
-                            )}
-                            <h1 className="text-7xl font-bold leading-tight text-gray-900">
-                                {company.name}
-                            </h1>
-                        </div>
-                        <p className="text-3xl font-light mb-4 text-gray-700">
-                            {company.position}
-                        </p>
-                        {company.client && (
-                            <p className="text-lg text-gray-600">
-                                Client: <span className="font-medium text-gray-800">{company.client}</span>
-                            </p>
-                        )}
-                    </animated.div>
-                </div>
-
-                {/* Main Content */}
-                <div className="space-y-24">
-                    {/* About Section */}
-                    <animated.section ref={aboutRef} style={aboutSprings}>
-                        <div className="mb-8">
-                            <h2 className="text-4xl font-bold mb-4 text-gray-900">
-                                About
-                            </h2>
-                            <div className="w-16 h-1 rounded-full" style={{ backgroundColor: colors.primary }}></div>
-                        </div>
-                        <p className="text-xl leading-relaxed max-w-4xl text-gray-700" style={{ lineHeight: '1.8' }}>
-                            {company.description}
-                        </p>
-                    </animated.section>
-
-                    {/* Two Column Layout */}
-                    <div className="grid grid-cols-2 gap-16">
-                        {/* Responsibilities */}
-                        <animated.section ref={responsibilitiesRef} style={responsibilitiesSprings}>
-                            <div className="mb-8">
-                                <h2 className="text-3xl font-bold mb-4 text-gray-900">
-                                    Responsibilities
-                                </h2>
-                                <div className="w-16 h-1 rounded-full" style={{ backgroundColor: colors.primary }}></div>
-                            </div>
-                            <ul className="space-y-6">
-                                {company.responsibilities.map((responsibility, index) => (
-                                    <li key={index} className="flex gap-4">
-                                        <div className="flex-shrink-0 mt-2 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: colors.primary }}></div>
-                                        <p className="text-lg leading-relaxed text-gray-700" style={{ lineHeight: '1.8' }}>
-                                            {responsibility}
-                                        </p>
-                                    </li>
-                                ))}
-                            </ul>
-                        </animated.section>
-
-                        {/* Achievements */}
-                        {company.achievements && company.achievements.length > 0 && (
-                            <animated.section ref={achievementsRef} style={achievementsSprings}>
-                                <div className="mb-8">
-                                    <h2 className="text-3xl font-bold mb-4 text-gray-900">
-                                        Achievements
-                                    </h2>
-                                    <div className="w-16 h-1 rounded-full" style={{ backgroundColor: colors.accent }}></div>
-                                </div>
-                                <ul className="space-y-6">
-                                    {company.achievements.map((achievement, index) => (
-                                        <li key={index} className="flex gap-4">
-                                            <div className="flex-shrink-0 mt-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: `${colors.accent}20`, border: `1.5px solid ${colors.accent}` }}>
-                                                <span className="text-xs font-bold" style={{ color: colors.accent }}>✓</span>
-                                            </div>
-                                            <p className="text-lg leading-relaxed text-gray-700" style={{ lineHeight: '1.8' }}>
-                                                {achievement}
-                                            </p>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </animated.section>
-                        )}
-                    </div>
-
-                    {/* Tech Stack */}
-                    <animated.section ref={techStackRef} style={techStackSprings}>
-                        <div className="mb-8">
-                            <h2 className="text-4xl font-bold mb-4 text-gray-900">
-                                Technology Stack
-                            </h2>
-                            <div className="w-16 h-1 rounded-full" style={{ backgroundColor: colors.secondary }}></div>
-                        </div>
-                        <div className="flex flex-wrap gap-3">
-                            {company.technologies.map((tech, index) => (
-                                <span 
-                                    key={index}
-                                    className="px-5 py-2.5 rounded-lg text-base font-medium border transition-all duration-200 hover:scale-105"
-                                    style={{ 
-                                        backgroundColor: `${colors.secondary}10`,
-                                        borderColor: `${colors.secondary}30`,
-                                        color: '#1f2937'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = colors.secondary;
-                                        e.currentTarget.style.borderColor = colors.secondary;
-                                        e.currentTarget.style.color = '#000';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = `${colors.secondary}10`;
-                                        e.currentTarget.style.borderColor = `${colors.secondary}30`;
-                                        e.currentTarget.style.color = '#1f2937';
-                                    }}
-                                >
-                                    {tech}
-                                </span>
-                            ))}
-                        </div>
-                    </animated.section>
-
-                    {/* Projects */}
-                    {company.projects && company.projects.length > 0 && (
-                        <section ref={projectsRef}>
-                            <div className="mb-12">
-                                <h2 className="text-4xl font-bold mb-4 text-gray-900">
-                                    Projects
-                                </h2>
-                                <div className="w-16 h-1 rounded-full" style={{ backgroundColor: colors.primary }}></div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-8">
-                                {company.projects.map((project, index) => (
-                                    <animated.div 
-                                        key={index}
-                                        className="p-8 rounded-2xl border bg-white/50 backdrop-blur-sm transition-all duration-200 hover:border-opacity-60 hover:shadow-lg"
-                                        style={{
-                                            borderColor: `${colors.primary}20`,
-                                            ...projectSprings[index]
-                                        }}
-                                    >
-                                        <h3 className="text-2xl font-bold mb-4 text-gray-900">
-                                            {project.name}
-                                        </h3>
-                                        <p className="text-lg leading-relaxed mb-6 text-gray-700" style={{ lineHeight: '1.8' }}>
-                                            {project.description}
-                                        </p>
-                                        <div className="flex flex-wrap gap-2">
-                                            {project.tech.map((tech, techIndex) => (
-                                                <span 
-                                                    key={techIndex}
-                                                    className="px-4 py-1.5 rounded-md text-sm font-medium border bg-gray-100 border-gray-200 text-gray-700"
-                                                >
-                                                    {tech}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </animated.div>
-                                ))}
-                            </div>
-                        </section>
-                    )}
-                </div>
-            </div>
-        </div>
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Link>
+      </div>
     );
-};
+  }
+
+  const otherRoles = companiesData.filter((c) => c.id !== company.id).slice(0, 4);
+
+  let idx = 0;
+  const metaCardsIdx = idx++;
+  const descriptionIdx = idx++;
+  const workIdx = hasProjects || hasKeyWork ? idx++ : -1;
+  const fullTechIdx = idx++;
+
+  return (
+    <div className="min-h-screen bg-[#16423c] relative overflow-hidden">
+      <div className="stars stars--hero opacity-50" aria-hidden="true">
+        {[...Array(14)].map((_, i) => (
+          <div className="star" key={i} />
+        ))}
+      </div>
+
+      <div ref={pageRef} className={shell}>
+        <Link
+          to={prefix}
+          className="inline-flex items-center gap-2 text-sm text-[#8fb8b0] hover:text-white no-underline transition-colors group"
+        >
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+          Back
+        </Link>
+
+        <animated.div style={heroSpring} className="mt-8 sm:mt-10 max-w-6xl">
+          <h1 className="text-2xl sm:text-3xl lg:text-[2rem] text-white font-semibold leading-tight tracking-tight uppercase">
+            {company.position}
+          </h1>
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[#9ebdb7] font-light">
+            <CompanyLogo
+              logo={company.logo}
+              logoInitial={company.logoInitial}
+              name={company.name}
+              accentColor={company.colorScheme.accent}
+              size="xs"
+            />
+            <span className="text-[#dce9e6] font-medium">{company.name}</span>
+            <span className="text-[#3d6b5c]" aria-hidden>
+              ?
+            </span>
+            <span>{company.period}</span>
+            {company.client && (
+              <>
+                <span className="text-[#3d6b5c]" aria-hidden>
+                  ?
+                </span>
+                <span>{company.client}</span>
+              </>
+            )}
+          </div>
+        </animated.div>
+
+        <div className="mt-10 lg:mt-12 grid grid-cols-1 lg:grid-cols-[1fr_300px] xl:grid-cols-[1fr_320px] gap-8 lg:gap-10 max-w-6xl items-start">
+          <div className="space-y-5 sm:space-y-6 min-w-0">
+            <animated.div
+              style={mainSprings[metaCardsIdx]}
+              className="grid sm:grid-cols-2 gap-5 sm:gap-6"
+            >
+              <div className={cardClass}>
+                <CardLabel>Role details</CardLabel>
+                <div className="space-y-5">
+                  <div className="flex gap-3">
+                    <Calendar className="h-4 w-4 text-[#c9a87c] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-[#8fb8b0] mb-1">Period</p>
+                      <p className="text-sm text-white font-light">
+                        {company.period}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <Building2 className="h-4 w-4 text-[#c9a87c] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-[#8fb8b0] mb-1">
+                        {company.client ? "Client" : "Company"}
+                      </p>
+                      <p className="text-sm text-white font-light">
+                        {company.client ?? company.name}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className={cardClass}>
+                <CardLabel>Tech stack</CardLabel>
+                <ul className="flex flex-wrap gap-2">
+                  {company.technologies.slice(0, 8).map((tech) => (
+                    <li key={tech} className={tagClass}>
+                      {tech}
+                    </li>
+                  ))}
+                  {company.technologies.length > 8 && (
+                    <li className="text-sm text-[#8fb8b0] font-light px-1 py-1.5">
+                      +{company.technologies.length - 8} more
+                    </li>
+                  )}
+                </ul>
+              </div>
+            </animated.div>
+
+            <animated.section
+              style={mainSprings[descriptionIdx]}
+              className={cardClass}
+            >
+              <CardLabel>
+                {hasProjects ? "Role overview" : "What I did"}
+              </CardLabel>
+              <p className="text-base text-[#b8d4cf] font-light leading-[1.75]">
+                {company.description}
+              </p>
+            </animated.section>
+
+            {hasProjects && company.projects && (
+              <animated.section
+                style={mainSprings[workIdx]}
+                className={cardClass}
+              >
+                <CardLabel>Projects</CardLabel>
+                <ul className="list-none m-0 p-0 space-y-8">
+                  {company.projects.map((project, index) => (
+                    <li
+                      key={project.name}
+                      className={
+                        index < company.projects!.length - 1
+                          ? "pb-8 border-b border-[#3d6b5c]"
+                          : ""
+                      }
+                    >
+                      <h3 className="text-lg text-white font-medium mb-3">
+                        {project.name}
+                      </h3>
+                      <p className="text-[#9ebdb7] font-light leading-[1.75] mb-4">
+                        {project.description}
+                      </p>
+                      <ul className="flex flex-wrap gap-2">
+                        {project.tech.map((t) => (
+                          <li key={t} className={tagClass}>
+                            {t}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+              </animated.section>
+            )}
+
+            {hasKeyWork && company.responsibilities && (
+              <animated.section
+                style={mainSprings[workIdx]}
+                className={cardClass}
+              >
+                <CardLabel>Key work</CardLabel>
+                <ul className="list-none m-0 p-0 space-y-3">
+                  {company.responsibilities.map((item) => (
+                    <li
+                      key={item}
+                      className="flex gap-3 text-[#b8d4cf] font-light leading-[1.75] text-[15px]"
+                    >
+                      <span
+                        className="shrink-0 mt-2.5 h-1 w-1 rounded-full bg-[#c9a87c]"
+                        aria-hidden
+                      />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </animated.section>
+            )}
+
+            <animated.section
+              style={mainSprings[fullTechIdx]}
+              className={cardClass}
+            >
+              <CardLabel>Full technology</CardLabel>
+              <ul className="flex flex-wrap gap-2">
+                {company.technologies.map((tech) => (
+                  <li key={tech} className={tagClass}>
+                    {tech}
+                  </li>
+                ))}
+              </ul>
+            </animated.section>
+          </div>
+
+          <aside className="lg:sticky lg:top-20 space-y-5">
+            <animated.div style={sidebarSpring} className={cardClass}>
+              <CardLabel>About the company</CardLabel>
+              <div className="flex items-center gap-3 mb-4">
+                <CompanyLogo
+                  logo={company.logo}
+                  logoInitial={company.logoInitial}
+                  name={company.name}
+                  accentColor={company.colorScheme.accent}
+                  size="lg"
+                  className="rounded-lg"
+                />
+                <div className="min-w-0">
+                  <p className="text-white font-medium leading-snug">
+                    {company.name}
+                  </p>
+                  <p className="text-xs text-[#c9a87c] mt-1 tracking-wide">
+                    {company.period}
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm text-[#9ebdb7] font-light leading-relaxed mb-5">
+                {company.shortDescription}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {company.technologies.slice(0, 4).map((tech) => (
+                  <span
+                    key={tech}
+                    className="text-xs text-[#e8dcc8] bg-[#234a42]/80 border border-[#3d6b5c] px-2.5 py-1 rounded-md font-light"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </animated.div>
+
+            <animated.div style={sidebarSpring} className={cardClass}>
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-[#8fb8b0] font-medium">
+                  More roles
+                </p>
+                <Link
+                  to={prefix}
+                  className="text-xs text-[#8fb8b0] hover:text-[#c9a87c] no-underline transition-colors shrink-0"
+                >
+                  View all
+                </Link>
+              </div>
+              <ul className="list-none m-0 p-0 space-y-4">
+                {otherRoles.map((role) => (
+                  <li key={role.id}>
+                    <Link
+                      to={`${prefix}company/${role.id}`}
+                      className="group flex items-start gap-3 no-underline"
+                    >
+                      <CompanyLogo
+                        logo={role.logo}
+                        logoInitial={role.logoInitial}
+                        name={role.name}
+                        accentColor={role.colorScheme.accent}
+                        size="sm"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-white font-medium group-hover:text-[#c9a87c] transition-colors leading-snug">
+                          {role.name}
+                        </p>
+                        <p className="text-xs text-[#8fa89f] font-light mt-0.5 line-clamp-1">
+                          {role.position}
+                        </p>
+                      </div>
+                      <ArrowUpRight className="h-3.5 w-3.5 text-[#3d6b5c] group-hover:text-[#c9a87c] shrink-0 mt-1 transition-colors" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </animated.div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default CompanyPage;
+
+
